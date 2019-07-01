@@ -1,0 +1,147 @@
+import os
+from openpyxl import Workbook
+from openpyxl import load_workbook
+'''
+文件选择部分
+'''
+
+
+# 提示进行选择，输入3种输入方式(废弃)
+def choice():
+    input("输入对应的数字并按回车：\n 1.完全文件名输入\n 2.文件名为规律数字形式\n 3.直接读取文件夹中所有文件\n 4.关闭")
+    if input == '1':
+        inputwhole()
+    elif input == '2':
+        inputsep()
+    elif input == '3':
+         readtxtnames()
+    else:
+        return
+
+# 完全文件名输入
+def inputwhole():
+    pass
+# 文件名为规律数字形式
+def inputsep():
+    pass
+
+
+
+# 直接读取文件夹下所有文件名,结果类似1.txt,2.txt,存储在列表filenames中,输出到主程序
+
+
+
+'''
+txt读取部分(将文件名文件夹名拼接成完整路径储存于列表rout，计算文件名个数，进入循环，每一次循环文件名个数减一，文件向后推一个，文件中所有内容存入列表txtlist)
+
+'''
+def readtxt(filenames,filefoldername):
+    txtlist=[]
+    rout=[]
+    i=0
+    num = len(filenames)
+    num1 = num
+    num2 = num
+    if num > 0:
+        rout[i]=filefoldername+'/'+filenames[i]
+        txt=open(rout[i])
+        txtlist[i]=txt.readlines()
+        i=i+1
+        num=num-1
+    return txtlist,num1,num2
+
+'''
+txt内容处理
+'''
+def dealtxt(txtlist,num1):
+    i=0
+    if num1 > 0:
+        del txtlist[i][0:3]
+        del txtlist[i][-2:]
+        j=0
+        for txtlist[i][j] in txtlist[i]:
+            txtlist[i][j] = txtlist[i][j].replace("\n","")
+            txtlist[i][j] = txtlist[i][j].replace("\t"," ")
+            a = txtlist[i][j].find(" ")
+            txtlist[i][j]=txtlist[i][j][a:]
+            j=j+1
+        txtlist[i].remove(" 0")
+        i=i+1
+        num1=num1-1
+    return txtlist
+'''程序从此开始'''
+
+
+'''输入文件夹名，得到所有txt文件名'''
+filefoldername = input("输入所有txt所在文件夹文件名：")
+filenames = os.listdir(filefoldername)
+print(filenames)
+'''初始化4个列表txtlist：内容;rout:路径;head：标明txtlist中文件属于哪部分;countain：标明各多少行'''
+txtlist=[]
+rout=[]
+head=[]
+countain=[]
+'''记文件数，用来提取及输出'''
+num = len(filenames)
+print(num)
+num1 = num
+num2 = num
+'''循环1，读取所有txt中的所有文本到txtlist'''
+i=0
+while num > 0:
+    rout.append(filefoldername+'\\'+filenames[i])
+    txt=open(rout[i])
+    txtlist.append(txt.readlines())
+    i=i+1
+    num=num-1
+print(txtlist)
+print(rout)
+'''处理读进txtlist的文本，要求1.去除无用的第一列2.去除无用的行3.标记各项属于那部分4.标记各项有多少行'''
+i=0
+while num1 > 0:
+    del txtlist[i][0:3]
+    del txtlist[i][-2:]
+    j=0
+    for txtlist[i][j] in txtlist[i]:
+        txtlist[i][j] = txtlist[i][j].replace("\n","")
+        txtlist[i][j] = txtlist[i][j].replace("\t"," ")
+        a = txtlist[i][j].find(" ")
+        txtlist[i][j]=txtlist[i][j][a:]
+        j=j+1
+    txtlist[i].remove(" 0")
+    txtlist[i][0]=txtlist[i][0][7:-2]
+    head.append(int(txtlist[i][0]))
+    del txtlist[i][0]
+    countain.append(len(txtlist[i]))
+    num1=num1-1
+    i=i+1
+print(txtlist)
+print(head)
+print(countain)
+print(len(txtlist[0]))
+print(type(countain[0]))
+
+"""写入部分交互"""
+b1=input("输入要读取的excel完整路径")
+a1=input("输入要创建的工作表（sheet）名（非中文）")
+
+'''excel写入部分
+'''
+wb = load_workbook(b1)
+
+ws1 = wb.create_sheet(a1)
+
+i=0
+
+for col in range(1,43,3):
+    ws1.cell(column=col, row=1, value=50+5*i)
+    i=i+1
+i=0
+while num2>0:
+    colu=(head[i]-50)/5*3+1
+    for j in range(2,2+countain[i]):
+        ws1.cell(column=colu, row=j, value=txtlist[i][j-2])
+    i=i+1
+    num2=num2-1
+wb.save(b1)
+
