@@ -138,10 +138,27 @@ for col in range(1,43,3):
     i=i+1
 i=0
 while num2>0:
+    sum = 0
     colu=(head[i]-50)/5*3+1
     for j in range(2,2+countain[i]):
         ws1.cell(column=colu, row=j, value=txtlist[i][j-2])
+        sum = sum + float(txtlist[i][j-2])
+    average = sum/countain[i]
+    ws1.cell(column=colu + 1, row=2, value="average")
+    ws1.cell(column=colu + 1, row=3, value= average)
+    sum = 0
+    for j in range(2,2+countain[i]):
+        ws1.cell(column=colu+2, row=j, value=pow(((float(txtlist[i][j-2])-average)/average),2))
+        sum = sum + pow(((float(txtlist[i][j-2])-average)/average),2)
+    ws1.cell(column=colu + 1, row=4, value="sum")
+    average = sum / countain[i]
+    ws1.cell(column=colu + 1, row=5, value= sum)
+    ws1.cell(column=colu + 1, row=6, value="1/n")
+    ws1.cell(column=colu + 1, row=7, value= average)
+    ws1.cell(column=colu + 1, row=8, value="^0.5")
+    ws1.cell(column=colu + 1, row=9, value=pow(average,0.5))
     i=i+1
     num2=num2-1
 wb.save(b1)
+
 
